@@ -1,6 +1,6 @@
 {
   "name": "create-sui-dapp",
-  "version": "0.6.0",
+  "version": "0.6.3",
   "description": "Command-line interface for Sui dApp Starter",
   "type": "module",
   "bin": {
@@ -10,7 +10,8 @@
   "scripts": {
     "dev": "tsc -w",
     "build": "tsc",
-    "cli": "pnpm build && node ./dist/index.js"
+    "cli": "pnpm build && node ./dist/index.js",
+    "prepublishOnly": "pnpm build"
   },
   "devDependencies": {
     "@types/command-exists": "^1.2.3",
