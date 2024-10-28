@@ -1,5 +1,5 @@
 # create-sui-dapp
-Command-line interface for [Sui dApp Starter](https://github.com/kkomelin/sui-dapp-starter)
+Command-line interface for [Sui dApp Starter](https://github.com/suiware/sui-dapp-starter)
 
 ## Requirements
 
@@ -15,4 +15,4 @@ pnpm create sui-dapp@latest
 
 ## Links
 
-- [Sui dApp Starter](https://github.com/kkomelin/sui-dapp-starter)
+- [Sui dApp Starter](https://github.com/suiware/sui-dapp-starter)
