@@ -4,11 +4,13 @@ import chalk from 'chalk'
 import { Command } from 'commander'
 import { APP_NAME } from './constants.js'
 import {
+  capitalize,
   checkGit,
-  cloneStarter,
+  displayErrorMessage,
   displayInfoMessage,
   getPackageVersion,
-  promptForProjectName,
+  promptForSettings,
+  scaffoldProject,
 } from './utils.js'
 
 const main = async () => {
@@ -22,9 +24,18 @@ const main = async () => {
     .version(getPackageVersion())
     .arguments('[project-name]')
     .action(async (args: string) => {
-      const projectName = await promptForProjectName(args)
-      displayInfoMessage(`\nCreating "${projectName}" project...\n`)
-      await cloneStarter(projectName)
+      const choices = await promptForSettings(args)
+      if (!choices) {
+        displayErrorMessage(`\nIncorrect input. Please try again.\n`)
+        return
+      }
+
+      const { projectName, framework } = choices
+
+      displayInfoMessage(
+        `\nCreating "${projectName}" project with ${capitalize(framework)} frontend...\n`
+      )
+      await scaffoldProject(projectName, framework)
     })
 
   program.parse()

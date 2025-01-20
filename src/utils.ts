@@ -6,9 +6,17 @@ import inquirer from 'inquirer'
 import ora from 'ora'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import { APP_NAME, SOURCE_REPO } from './constants.js'
+import {
+  APP_NAME,
+  DEFAULT_FRONTEND_FRAMEWORK,
+  SOURCE_REPO,
+  SUPPORTED_FRONTEND_FRAMEWORKS,
+} from './constants.js'
 
-export const cloneStarter = async (projectName: string) => {
+export const scaffoldProject = async (
+  projectName: string,
+  framework: string
+) => {
   checkFolderExists(projectName)
 
   await runCommand(
@@ -23,7 +31,21 @@ export const cloneStarter = async (projectName: string) => {
     'Cannot remove old git history'
   )
 
-  await runCommand(
+  if (framework === 'react') {
+    await runCommand(
+      `cd "${projectName}" && rm -rf ./packages/frontend-next`,
+      'Initializing a React frontend',
+      'Cannot initialize a React frontend'
+    )
+  } else if (framework === 'nextjs') {
+    await runCommand(
+      `cd "${projectName}" && rm -rf ./packages/frontend && mv -f ./packages/frontend-next ./packages/frontend`,
+      'Initializing a Next.js frontend',
+      'Cannot initialize a Next.js frontend'
+    )
+  }
+
+  await await runCommand(
     `cd "${projectName}" && git init && git add . && git commit -m "Initial commit"`,
     'Initializing a new git repo',
     'Cannot initialize a new git repo'
@@ -60,9 +82,9 @@ export const checkGit = async () => {
   }
 }
 
-export async function promptForProjectName(args: string) {
+export async function promptForSettings(args: string) {
   if (!args) {
-    const { projectName } = await inquirer.prompt([
+    return await inquirer.prompt([
       {
         type: 'input',
         name: 'projectName',
@@ -75,10 +97,16 @@ export async function promptForProjectName(args: string) {
           return true
         },
       },
+      {
+        type: 'list',
+        name: 'framework',
+        choices: SUPPORTED_FRONTEND_FRAMEWORKS,
+        default: DEFAULT_FRONTEND_FRAMEWORK,
+        message: 'Please choose a frontend framework you want to use:',
+      },
     ])
-    return projectName
   }
-  return args
+  return null
 }
 
 const isPnpmInstalled = async () => {
@@ -161,4 +189,8 @@ const runCommand = (
     verbose && console.error(e)
     process.exit(1)
   }
+}
+
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1)
 }
