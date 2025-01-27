@@ -30,12 +30,12 @@ const main = async () => {
         return
       }
 
-      const { projectName, framework } = choices
+      const { projectName, template } = choices
 
       displayInfoMessage(
-        `\nCreating "${projectName}" project with ${capitalize(framework)} frontend...\n`
+        `\nCreating "${projectName}" project from ${capitalize(template)} template...\n`
       )
-      await scaffoldProject(projectName, framework)
+      await scaffoldProject(projectName, template)
     })
 
   program.parse()

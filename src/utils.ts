@@ -8,14 +8,14 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import {
   APP_NAME,
-  DEFAULT_FRONTEND_FRAMEWORK,
+  DEFAULT_TEMPLATE,
   SOURCE_REPO,
-  SUPPORTED_FRONTEND_FRAMEWORKS,
+  TEMPLATES,
 } from './constants.js'
 
 export const scaffoldProject = async (
   projectName: string,
-  framework: string
+  template: string
 ) => {
   checkFolderExists(projectName)
 
@@ -31,19 +31,7 @@ export const scaffoldProject = async (
     'Cannot remove old git history'
   )
 
-  if (framework === 'react') {
-    await runCommand(
-      `cd "${projectName}" && rm -rf ./packages/frontend-next`,
-      'Initializing a React frontend',
-      'Cannot initialize a React frontend'
-    )
-  } else if (framework === 'nextjs') {
-    await runCommand(
-      `cd "${projectName}" && rm -rf ./packages/frontend && mv -f ./packages/frontend-next ./packages/frontend`,
-      'Initializing a Next.js frontend',
-      'Cannot initialize a Next.js frontend'
-    )
-  }
+  await initTemplate(projectName, template)
 
   await await runCommand(
     `cd "${projectName}" && git init && git add . && git commit -m "Initial commit"`,
@@ -99,9 +87,9 @@ export async function promptForSettings(args: string) {
       },
       {
         type: 'list',
-        name: 'framework',
-        choices: SUPPORTED_FRONTEND_FRAMEWORKS,
-        default: DEFAULT_FRONTEND_FRAMEWORK,
+        name: 'template',
+        choices: TEMPLATES,
+        default: DEFAULT_TEMPLATE,
         message: 'Please choose a frontend framework you want to use:',
       },
     ])
@@ -193,4 +181,33 @@ const runCommand = (
 
 export const capitalize = (str: string) => {
   return str.charAt(0).toUpperCase() + str.slice(1)
+}
+
+export const initTemplate = async (projectName: string, template: string) => {
+  switch (template) {
+    case 'greeting-react':
+      await runCommand(
+        `cd "${projectName}" && rm -rf ./packages/backend-counter && rm -rf ./packages/frontend-greeting-next && rm -rf ./packages/frontend-counter-react`,
+        'Initializing the Greeting (React) template',
+        'Cannot initialize the Greeting (React) template'
+      )
+      return
+    case 'greeting-next':
+      await runCommand(
+        `cd "${projectName}" && rm -rf ./packages/backend-counter && rm -rf ./packages/frontend && rm -rf ./packages/frontend-counter-react && mv -f ./packages/frontend-greeting-next ./packages/frontend`,
+        'Initializing the Greeting (Next.js) template',
+        'Cannot initialize the Greeting (Next.js) template'
+      )
+      return
+    case 'counter-react':
+      await runCommand(
+        `cd "${projectName}" && rm -rf ./packages/backend && rm -rf ./packages/frontend && rm -rf ./packages/frontend-greeting-next && mv -f ./packages/frontend-counter-react ./packages/frontend && mv -f ./packages/backend-counter ./packages/backend`,
+        'Initializing the Counter (React) template',
+        'Cannot initialize the Counter (React) template'
+      )
+      return
+    default:
+      displayErrorMessage(`${template} template is not found`)
+      return
+  }
 }
