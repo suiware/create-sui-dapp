@@ -51,6 +51,12 @@ export const scaffoldProject = async (
     )
   }
 
+  if (!(await isSuibaseInstalled())) {
+    displayErrorMessage(
+      'The starter needs Suibase, which can be found here https://suibase.io'
+    )
+  }
+
   displayInfoMessage('\nHappy coding!')
   console.log(
     `\n ~ and if you like ${chalk.green(
@@ -100,6 +106,15 @@ export async function promptForSettings(args: string) {
 const isPnpmInstalled = async () => {
   try {
     await commandExists('pnpm')
+    return true
+  } catch {
+    return false
+  }
+}
+
+const isSuibaseInstalled = async () => {
+  try {
+    await commandExists('msui')
     return true
   } catch {
     return false
